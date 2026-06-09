@@ -1,0 +1,21 @@
+spec:
+  description: "Bazowa konfiguracja joba dla pipeline GitLab CI/CD."
+  inputs:
+    image:
+      description: "Obraz kontenera używany przez joby dziedziczące po szablonie."
+      default: "alpine:3.22"
+    template-name:
+      description: "Nazwa ukrytego joba udostępnianego przez komponent."
+      default: ".bootstrap"
+      regex: "^\\.[a-zA-Z0-9_.-]+$"
+    before-script:
+      description: "Polecenia wykonywane przed skryptem joba konsumenta."
+      type: array
+      default:
+        - |
+          echo "bootstrap: project=${CI_PROJECT_PATH} ref=${CI_COMMIT_REF_NAME}"
+---
+
+.before_script:
+  image: $[[ inputs.image ]]
+  before_script: $[[ inputs.before-script ]]

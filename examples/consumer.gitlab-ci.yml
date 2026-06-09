@@ -1,0 +1,14 @@
+include:
+  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/bootstrap@1.0.0
+    inputs:
+      image: alpine:3.22
+
+stages:
+  - test
+
+verify:
+  extends: .bootstrap
+  stage: test
+  script:
+    - bootstrap_info
+    - echo "Component is ready"
