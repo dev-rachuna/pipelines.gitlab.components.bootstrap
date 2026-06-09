@@ -5,7 +5,7 @@ spec:
     image:
       description: "Obraz bazowy kontenera"
       default: "registry.gitlab.com/dev.rachuna/artifacts/containers/python:1.2.0"
-    before_script:
+    after_script:
       description: "Polecenia wykonywane przed skryptem joba konsumenta."
       type: array
       default:
@@ -15,14 +15,15 @@ spec:
 include:
   - local: helpers/*/script.sh.yml
 
-.before_script:
+.after_script:
   image: $[[ inputs.image ]]
-  before_script: 
+  after_script: 
     - !reference [.helpers.logger.script.sh]
     - !reference [.helpers.job-prepare.script.sh]
-    - !reference [.helpers.logo.script.sh]
-    - $[[ inputs.before_script ]]
+    - !reference [.helpers.job-docs.script.sh]
+    - $[[ inputs.after_script ]]
     - |
-      if [ -n "${CI_JOB_BEFORE_SCRIPT:-}" ]; then
-        eval "$CI_JOB_BEFORE_SCRIPT"
+      if [ -n "${CI_JOB_AFTER_SCRIPT:-}" ]; then
+        eval "$CI_JOB_AFTER_SCRIPT"
       fi
+
