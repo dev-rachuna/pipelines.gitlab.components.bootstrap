@@ -3,7 +3,7 @@ spec:
   inputs:
     image:
       description: "Obraz kontenera używany przez joby dziedziczące po szablonie."
-      default: "alpine:3.22"
+      default: "registry.gitlab.com/dev.rachuna/artifacts/containers/python:1.2.0"
     template-name:
       description: "Nazwa ukrytego joba udostępnianego przez komponent."
       default: ".bootstrap"
@@ -15,7 +15,11 @@ spec:
         - |
           echo "bootstrap: project=${CI_PROJECT_PATH} ref=${CI_COMMIT_REF_NAME}"
 ---
+include:
+  - local: helpers/*/script.sh.yml
 
 .before_script:
   image: $[[ inputs.image ]]
-  before_script: $[[ inputs.before-script ]]
+  before_script: 
+    - !reference [.helpers.logger.script.sh]
+    - $[[ inputs.before-script ]]
