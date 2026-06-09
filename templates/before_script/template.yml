@@ -8,9 +8,7 @@ spec:
     before_script:
       description: "Polecenia wykonywane przed skryptem joba konsumenta."
       type: array
-      default:
-        - |
-          echo "bootstrap: project=${CI_PROJECT_PATH} ref=${CI_COMMIT_REF_NAME}"
+      default: []
 ---
 include:
   - local: helpers/*/script.sh.yml
@@ -21,6 +19,7 @@ include:
     - !reference [.helpers.logger.script.sh]
     - !reference [.helpers.job-prepare.script.sh]
     - !reference [.helpers.logo.script.sh]
+    - !reference [.helpers.gitlab-tools.script.sh]
     - $[[ inputs.before_script ]]
     - |
       if [ -n "${CI_JOB_BEFORE_SCRIPT:-}" ]; then

@@ -1,13 +1,13 @@
 ---
 .helpers.logger.script.sh:
   - |
+    declare -i term_width=130
+
+  - |
     h3() {
       echo -e "\033[1;34m---> $* \033[0m"
     }
-
     h3 "common/helpers/logger/script.sh.yml"
-  - |
-    declare -i term_width=130
 
   - |
     banner() {
