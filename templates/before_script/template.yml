@@ -4,10 +4,6 @@ spec:
     image:
       description: "Obraz kontenera używany przez joby dziedziczące po szablonie."
       default: "registry.gitlab.com/dev.rachuna/artifacts/containers/python:1.2.0"
-    template-name:
-      description: "Nazwa ukrytego joba udostępnianego przez komponent."
-      default: ".bootstrap"
-      regex: "^\\.[a-zA-Z0-9_.-]+$"
     before-script:
       description: "Polecenia wykonywane przed skryptem joba konsumenta."
       type: array
@@ -22,4 +18,8 @@ include:
   image: $[[ inputs.image ]]
   before_script: 
     - !reference [.helpers.logger.script.sh]
+    - !reference [.helpers.job-prepare.script.sh]
+    - !reference [.helpers.logo.script.sh]
     - $[[ inputs.before-script ]]
+  variables:
+    GITLAB_CI_REPOSITORY_ID: "83078303"
