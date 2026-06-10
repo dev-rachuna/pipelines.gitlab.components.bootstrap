@@ -68,7 +68,7 @@
     }
     semantic_release
 
-# Publikuje zmieniony plik CHANGELOG.md w bieżącej gałęzi.
+# Publikuje nowy lub zmieniony plik CHANGELOG.md w bieżącej gałęzi.
 #
 # usage:
 #   push_changelog
@@ -80,13 +80,14 @@
 #
 # outputs:
 #   Tworzy commit "docs: update changelog [skip ci]" i wysyła go do
-#   CI_COMMIT_BRANCH. Funkcja działa tylko dla wydania typu release, poza
-#   trybem dry-run i gdy istnieje CHANGELOG.md. Używa GITLAB_USER_EMAIL
-#   oraz GITLAB_USER_NAME do konfiguracji autora commita.
+#   CI_COMMIT_BRANCH. Wykrywa zarówno zmiany w śledzonym pliku, jak i nowy,
+#   nieśledzony CHANGELOG.md utworzony przez Semantic Release. Funkcja działa
+#   tylko dla wydania typu release i poza trybem dry-run. Używa
+#   GITLAB_USER_EMAIL oraz GITLAB_USER_NAME do konfiguracji autora commita.
   - |
     push_changelog() {
       if [[ -f CHANGELOG.md && "$ARTIFACTS_TYPE" == "release" && "$VERSIONING_DRY_RUN" != "true" ]]; then
-        if ! git diff --quiet -- CHANGELOG.md; then
+        if [[ -n "$(git status --porcelain --untracked-files=all -- CHANGELOG.md)" ]]; then
           info "📄 Pushing changelog to GitLab"
           git config user.email "${GITLAB_USER_EMAIL}"
           git config user.name "${GITLAB_USER_NAME}"
