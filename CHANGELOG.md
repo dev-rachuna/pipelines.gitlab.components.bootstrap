@@ -1,3 +1,14 @@
+## [1.0.1](https://gitlab.com/dev.rachuna/pipelines/gitlab/components/bootstrap/compare/1.0.0...1.0.1) (2026-06-10)
+
+### 🐛 Bug Fixes 🐛
+
+* Poprawka przy push changelog ([5a10851](https://gitlab.com/dev.rachuna/pipelines/gitlab/components/bootstrap/commit/5a10851d97ce43d8a2ee1b5d4a5562e46c5c5a80))
+* Poprawka w generowaniu URL do dokumentacji ([aaf3819](https://gitlab.com/dev.rachuna/pipelines/gitlab/components/bootstrap/commit/aaf3819c11729de5cc9a1eab937a6fdadb5119f5))
+
+### 📝 Documentation 📝
+
+* Aktualizacja dokumentacji ([4bac7d1](https://gitlab.com/dev.rachuna/pipelines/gitlab/components/bootstrap/commit/4bac7d171185ce2b266764cee5faa1c0d983a104))
+
 ## 1.0.0 (2026-06-10)
 
 ### ✨ Features ✨
