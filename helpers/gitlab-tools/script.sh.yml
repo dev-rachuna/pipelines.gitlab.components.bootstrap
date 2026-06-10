@@ -3,6 +3,17 @@
   - |
     h3 "common/helpers/gitlab-tools/script.sh.yml"
 
+# Dodaje wszystkie zmiany do indeksu, wykonuje amend ostatniego commita
+# i wypycha go do bieżącej gałęzi.
+#
+# usage:
+#   gitlab_commit_amend
+#
+# example:
+#   gitlab_commit_amend
+#
+# outputs:
+#   GITLAB_AMEND_RESULT - wynik operacji: no_changes, skipped lub pushed
   - |
     gitlab_commit_amend() {
       git add -A
@@ -25,6 +36,17 @@
       fi
     }
 
+# Uruchamia nowy pipeline dla bieżącej gałęzi za pomocą GitLab API,
+# wyświetla jego adres URL i zatrzymuje obecny job.
+#
+# usage:
+#   run_new_pipeline
+#
+# example:
+#   run_new_pipeline
+#
+# outputs:
+#   URL uruchomionego pipeline'u na standardowym wyjściu; kończy job kodem 1
   - |
     run_new_pipeline(){
         resp=$(curl -s -X POST --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/pipeline" --data "ref=${CI_COMMIT_REF_NAME}")
@@ -33,6 +55,18 @@
         h2 "⏳ Uruchomiony nowy pipeline — obecny pipeline zatrzymany"
         exit 1
     }
+
+# Konfiguruje klucz SSH z GITLAB_SSH_KEY i dodaje gitlab.com
+# do pliku znanych hostów.
+#
+# usage:
+#   gitlab_ssh_key
+#
+# example:
+#   gitlab_ssh_key
+#
+# outputs:
+#   Tworzy $HOME/.ssh/id_rsa oraz aktualizuje $HOME/.ssh/known_hosts
   - |
     gitlab_ssh_key(){
       mkdir -p "$HOME/.ssh"

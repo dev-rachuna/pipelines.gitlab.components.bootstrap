@@ -1,0 +1,23 @@
+---
+spec:
+  description: "Bazowa konfiguracja joba dla pipeline GitLab CI/CD."
+  inputs:
+    image:
+      description: "Obraz bazowy kontenera"
+      default: "registry.gitlab.com/dev.rachuna/artifacts/containers/python:1.2.0"
+    before_script:
+      description: "Polecenia wykonywane przed skryptem joba konsumenta."
+      type: array
+      default: []
+---
+versioning:
+  stage: prepare
+  extends:
+    - .before_script
+    - .after_script
+  script:
+    - h1 "test"
+  variables:
+    DOCS_MD_FILE_PATH: test
+    CI_JOB_AFTER_SCRIPT: |
+      h1 "end2"
