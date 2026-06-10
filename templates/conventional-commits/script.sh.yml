@@ -1,0 +1,80 @@
+---
+.bootstrap.conventional-commits.script.sh:
+
+# Pobiera tytuły commitów z bieżącej gałęzi względem domyślnej
+# gałęzi repozytorium.
+#
+# usage:
+#   get_commits
+#
+# example:
+#   get_commits
+#
+# outputs:
+#   Ustawia zmienną COMMITS z tytułami commitów do analizy.
+#   Pomija analizę na gałęzi domyślnej lub gdy nie znaleziono commitów.
+  - |
+    get_commits() {
+        info "🔍 Get Commits"
+
+        local current_branch
+        current_branch="${CI_COMMIT_BRANCH:-${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME:-}}"
+
+        if [[ "$CI_DEFAULT_BRANCH" == "$current_branch" ]]; then
+          h3 "Current branch is default branch ($CI_DEFAULT_BRANCH), skipping commit analysis"
+          return 0
+        fi
+
+        git fetch --no-tags --prune origin "$CI_DEFAULT_BRANCH" 2>/dev/null
+
+        COMMITS=$(git --no-pager log origin/"$CI_DEFAULT_BRANCH"..HEAD --pretty=format:"%s")
+
+        if [[ -z "$COMMITS" ]]; then
+          h3 "No commits to analyze"
+          return 0
+        fi
+      }
+
+# Sprawdza tytuły commitów pod kątem zgodności ze wzorcem
+# Conventional Commits.
+#
+# usage:
+#   analyze_commits
+#
+# example:
+#   get_commits
+#   analyze_commits
+#
+# outputs:
+#   Wyświetla wynik walidacji każdego commita na standardowym wyjściu.
+#   Kończy job błędem, gdy co najmniej jeden tytuł nie pasuje do
+#   CONVENTIONAL_COMMITS_REGEXP.
+  - |
+    analyze_commits() {
+      info "📃 Analyze Conventional Commits"
+
+      local is_err="false"
+
+      while IFS= read -r msg; do
+        [[ -z "$msg" ]] && continue
+
+        if grep -Eq "^(Merge|Revert|Initial\scommit)" <<< "$msg"; then
+          continue
+        fi
+
+        if grep -Eq "$CONVENTIONAL_COMMITS_REGEXP" <<< "$msg"; then
+          h3 "✔️ Zgodność: \"$msg\""
+        else
+          h3 "❌ Niezgodność: \"$msg\""
+          is_err="true"
+        fi
+
+      done <<< "$COMMITS"
+
+      if [[ "$is_err" == "true" ]]; then
+        critical "❌ Wykryto niezgodność z Conventional Commits"
+      fi
+    }
+  - |
+    get_commits
+    analyze_commits

@@ -1,0 +1,9 @@
+---
+.bootstrap.shellcheck.script.sh:
+  - |
+    info "🔍 Uruchamianie shellcheck ..."
+
+    while IFS= read -r -d '' file_sh; do
+      h2 "$file_sh"
+      shellcheck --shell=bash "$file_sh" || critical "❌ shellcheck wykrył błędy"
+    done < <(find ./ -path './.git' -prune -o -type f \( -name "*.sh" -o -perm /111 \) -print0)

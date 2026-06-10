@@ -1,0 +1,92 @@
+---
+spec:
+  description: "Wyznacza wersję projektu i publikuje wydanie za pomocą Semantic Release."
+  component: [name, version, reference]
+  inputs:
+    job-name:
+      type: string
+      default: versioning
+      description: "Nazwa joba odpowiedzialnego za wersjonowanie projektu."
+    job-stage:
+      default: publish
+      description: "Etap pipeline, na którym zostanie uruchomiony job."
+      options: 
+        - .pre
+        - prepare          # CI | CD
+        - validate         # CI | CD
+        - dependency       # CI | CD
+        - build            # CI |
+        - deployment       #    | CD
+        - tests            # CI | CD
+        - publish          # CI | CD
+        - .post
+    job-image:
+      description: "Obraz kontenera używany do uruchomienia joba."
+      type: string
+      default: registry.gitlab.com/dev.rachuna/artifacts/containers/semantic-release:1.2.0
+    job-rules:
+      description: "Reguły określające, kiedy job zostanie dodany do pipeline."
+      type: array
+      default:
+        - if: '$ENABLED_VERSIONING == "false"'
+          when: never
+        - when: on_success
+    job-needs:
+      description: "Lista jobów wymaganych przed uruchomieniem tego joba."
+      type: array
+      default: []
+    job-resource-group:
+      description: "Nazwa grupy zasobów ograniczającej równoległe wykonywanie joba."
+      type: string
+      default: "${CI_PIPELINE_ID}-${CI_JOB_NAME}"
+    job-before-script:
+      description: "Dodatkowy skrypt wykonywany przed procesem wersjonowania."
+      type: string
+      default: ":"
+    job-after-script:
+      description: "Dodatkowy skrypt wykonywany po procesie wersjonowania."
+      type: string
+      default: ":"
+    job-dry-run:
+      description: "Uruchamia Semantic Release w trybie symulacji bez publikowania wydania i tagów."
+      type: boolean
+      default: false
+
+---
+include:
+  - local: templates/versioning/script.sh.yml
+
+"$[[ inputs.job-name ]]":
+  image: "$[[ inputs.job-image ]]"
+  stage: "$[[ inputs.job-stage ]]"
+  rules: "$[[ inputs.job-rules ]]"
+  needs: "$[[ inputs.job-needs ]]"
+  artifacts: {}
+  cache: {}
+  resource_group: "$[[ inputs.job-resource-group ]]"
+  extends:
+    - .before_script
+    - .after_script
+  variables:
+    GITLAB_CI_COMPONENTS_PATH: dev.rachuna/pipelines/gitlab/components/bootstrap
+    GITLAB_CI_COMPONENTS_VERSION: "$[[ component.reference ]]"
+    RELEASERC_PATH: templates/versioning/.releaserc.cjs
+    VERSIONING_DRY_RUN: "$[[ inputs.job-dry-run ]]"
+    NODE_EXTRA_CA_CERTS: /etc/ssl/certs/ca-certificates.crt
+    DOCS_MD_FILE_PATH: templates/versioning/README.md
+  before_script:
+    - !reference [.before_script, before_script]
+    - |
+      check_var "RELEASERC_PATH"
+      check_var "VERSIONING_DRY_RUN"
+      check_var "NODE_EXTRA_CA_CERTS"
+      check_var "DOCS_MD_FILE_PATH"
+      check_var "GITLAB_TOKEN"
+      echo "Component reference: $[[ component.name ]]"
+      echo "Component reference: $[[ component.version ]]"
+      echo "Component reference: $[[ component.reference ]]"
+    - $[[ inputs.job-before-script ]]
+  script: !reference [.bootstrap.versioning.script.sh]
+  after_script:
+    - !reference [.after_script, after_script]
+    - $[[ inputs.job-after-script ]]

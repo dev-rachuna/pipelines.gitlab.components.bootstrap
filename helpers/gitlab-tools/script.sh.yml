@@ -1,0 +1,78 @@
+---
+.helpers.gitlab-tools.script.sh:
+  - |
+    h3 "common/helpers/gitlab-tools/script.sh.yml"
+
+# Dodaje wszystkie zmiany do indeksu, wykonuje amend ostatniego commit i wypycha go do bieżącej gałęzi.
+#
+# usage:
+#   gitlab_commit_amend
+#
+# example:
+#   gitlab_commit_amend
+#
+# outputs:
+#   GITLAB_AMEND_RESULT - wynik operacji: no_changes, skipped lub pushed
+  - |
+    gitlab_commit_amend() {
+      git add -A
+
+      if git diff --cached --quiet; then
+        h2 "Brak zmian do zacommitowania"
+        export GITLAB_AMEND_RESULT="no_changes"
+      elif git diff --cached HEAD^ --quiet 2>/dev/null; then
+        git restore --staged .
+        h2 "Formatowanie przywróciło stan HEAD^ — amend byłby pusty, pominięto"
+        export GITLAB_AMEND_RESULT="skipped"
+      else
+        h2 "Wykryto zmiany — git commit --amend"
+        git config user.email "${GITLAB_USER_EMAIL}"
+        git config user.name "${GITLAB_USER_NAME}"
+        git commit --amend --no-edit
+        git push --force-with-lease origin "HEAD:${CI_COMMIT_REF_NAME}"
+        h2 "Zmiany dodane do commita i wypchnięte"
+        export GITLAB_AMEND_RESULT="pushed"
+      fi
+    }
+
+# Uruchamia nowy pipeline dla bieżącej gałęzi za pomocą GitLab API,
+# wyświetla jego adres URL i zatrzymuje obecny job.
+#
+# usage:
+#   run_new_pipeline
+#
+# example:
+#   run_new_pipeline
+#
+# outputs:
+#   URL uruchomionego pipeline'u na standardowym wyjściu; kończy job kodem 1
+  - |
+    run_new_pipeline(){
+        resp=$(curl -s -X POST --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/pipeline" --data "ref=${CI_COMMIT_REF_NAME}")
+        echo -e "$resp "| jq .web_url
+
+        h2 "⏳ Uruchomiony nowy pipeline — obecny pipeline zatrzymany"
+        exit 1
+    }
+
+# Konfiguruje klucz SSH z GITLAB_SSH_KEY i dodaje gitlab.com
+# do pliku znanych hostów.
+#
+# usage:
+#   gitlab_ssh_key
+#
+# example:
+#   gitlab_ssh_key
+#
+# outputs:
+#   Tworzy $HOME/.ssh/id_rsa oraz aktualizuje $HOME/.ssh/known_hosts
+  - |
+    gitlab_ssh_key(){
+      mkdir -p "$HOME/.ssh"
+      echo "$GITLAB_SSH_KEY" > "$HOME/.ssh/id_rsa"
+      chmod 700 "$HOME/.ssh"
+      chmod 600 "$HOME/.ssh/id_rsa"
+
+      ssh-keyscan gitlab.com 2>/dev/null >> "$HOME/.ssh/known_hosts"
+      chmod 644 "$HOME/.ssh/known_hosts"
+    }

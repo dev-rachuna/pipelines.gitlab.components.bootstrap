@@ -1,0 +1,26 @@
+---
+spec:
+  description: "Wyświetla status i dokumentację po wykonaniu skryptu joba."
+  inputs:
+    image:
+      description: "Obraz kontenera przypisywany do joba konsumenta."
+      default: "registry.gitlab.com/dev.rachuna/artifacts/containers/python:1.2.0"
+    after_script:
+      description: "Dodatkowe polecenia wykonywane po wyświetleniu dokumentacji."
+      type: array
+      default: []
+---
+include:
+  - local: helpers/*/script.sh.yml
+
+.after_script:
+  image: $[[ inputs.image ]]
+  after_script: 
+    - !reference [.helpers.logger.script.sh]
+    - !reference [.helpers.job-prepare.script.sh]
+    - !reference [.helpers.job-docs.script.sh]
+    - $[[ inputs.after_script ]]
+    - |
+      if [ -n "${JOB_AFTER_SCRIPT:-}" ]; then
+        eval "$JOB_AFTER_SCRIPT"
+      fi

@@ -1,0 +1,49 @@
+---
+.helpers.job-prepare.script.sh:
+  - |
+    set -eaou pipefail
+
+# Przygotowuje zmienne opisujące repozytorium i plik konfiguracji CI
+# na podstawie CI_CONFIG_PATH.
+#
+# usage:
+#   prepare_job
+#
+# example:
+#   prepare_job
+#
+# outputs:
+#   Eksportuje GITLAB_CI_REPOSITORY_FILEPATH, GITLAB_CI_REPOSITORY_PATH,
+#   GITLAB_CI_REPOSITORY_BRANCH, GITLAB_CI_REPOSITORY_PATH_ENCODED
+#   oraz GITLAB_CI_REPOSITORY_ID
+  - |
+    prepare_job() {
+      h3 "common/helpers/job-prepare/script.sh.yml"
+
+      CONFIG="${CI_CONFIG_PATH#*@}"
+
+      export GITLAB_CI_REPOSITORY_FILEPATH="${CI_CONFIG_PATH%%@*}"
+      export GITLAB_CI_REPOSITORY_PATH="${CONFIG%%:*}"
+      export GITLAB_CI_REPOSITORY_BRANCH="${CONFIG#*:}"
+      export GITLAB_CI_REPOSITORY_PATH_ENCODED="${GITLAB_CI_REPOSITORY_PATH//\//%2F}"
+      export GITLAB_CI_REPOSITORY_ID="83078303"
+    }
+    prepare_job
+
+# Sprawdza, czy zmienna o podanej nazwie jest zdefiniowana.
+#
+# usage:
+#   check_var <nazwa_zmiennej>
+#
+# example:
+#   check_var CI_PROJECT_ID
+#
+# outputs:
+#   Komunikat błędu na standardowym wyjściu i kod 1, gdy zmienna nie istnieje
+  - |
+    check_var() {
+      if [[ ! -v "$1" ]]; then
+        echo "❌ Zmienna '$1' nie jest zdefiniowana!"
+        exit 1
+      fi
+    }

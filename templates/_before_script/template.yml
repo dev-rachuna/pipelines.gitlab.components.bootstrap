@@ -1,0 +1,27 @@
+---
+spec:
+  description: "Przygotowuje środowisko i helpery przed wykonaniem skryptu joba."
+  inputs:
+    image:
+      description: "Obraz kontenera przypisywany do joba konsumenta."
+      default: "registry.gitlab.com/dev.rachuna/artifacts/containers/python:1.2.0"
+    before_script:
+      description: "Dodatkowe polecenia wykonywane po załadowaniu helperów."
+      type: array
+      default: []
+---
+include:
+  - local: helpers/*/script.sh.yml
+
+.before_script:
+  image: $[[ inputs.image ]]
+  before_script: 
+    - !reference [.helpers.logger.script.sh]
+    - !reference [.helpers.job-prepare.script.sh]
+    - !reference [.helpers.logo.script.sh]
+    - !reference [.helpers.gitlab-tools.script.sh]
+    - $[[ inputs.before_script ]]
+    - |
+      if [ -n "${JOB_BEFORE_SCRIPT:-}" ]; then
+        eval "$JOB_BEFORE_SCRIPT"
+      fi
