@@ -1,6 +1,7 @@
 ---
 spec:
   description: "Waliduje składnię i formatowanie plików YAML za pomocą narzędzia yamllint."
+  component: [name, version, reference]
   inputs:
     job-name:
       type: string
@@ -62,6 +63,7 @@ spec:
   variables:
     GITLAB_CI_COMPONENTS_PATH: dev.rachuna/pipelines/gitlab/components/bootstrap
     DOCS_MD_FILE_PATH: templates/yamllint/README.md
+    GITLAB_CI_COMPONENTS_VERSION: "$[[ component.reference ]]"
   before_script:
     - !reference [.before_script, before_script]
     - $[[ inputs.job-before-script ]]

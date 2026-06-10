@@ -82,9 +82,6 @@ include:
       check_var "NODE_EXTRA_CA_CERTS"
       check_var "DOCS_MD_FILE_PATH"
       check_var "GITLAB_TOKEN"
-      echo "Component reference: $[[ component.name ]]"
-      echo "Component reference: $[[ component.version ]]"
-      echo "Component reference: $[[ component.reference ]]"
     - $[[ inputs.job-before-script ]]
   script: !reference [.bootstrap.versioning.script.sh]
   after_script:

@@ -1,6 +1,7 @@
 ---
 spec:
   description: "Waliduje skrypty powłoki za pomocą narzędzia ShellCheck."
+  component: [name, version, reference]
   inputs:
     job-name:
       type: string
@@ -65,6 +66,7 @@ include:
   variables:
     GITLAB_CI_COMPONENTS_PATH: dev.rachuna/pipelines/gitlab/components/bootstrap
     DOCS_MD_FILE_PATH: templates/shellcheck/README.md
+    GITLAB_CI_COMPONENTS_VERSION: "$[[ component.reference ]]"
   before_script:
     - !reference [.before_script, before_script]
     - $[[ inputs.job-before-script ]]

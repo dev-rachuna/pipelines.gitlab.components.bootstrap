@@ -20,7 +20,7 @@
       [[ ! -f "$DOCS_MD_FILE_PATH" && "${PROJECT_TYPE:-default}" == "gitlab-pipelines" ]] && critical "🫵 Komunikat dla DevOps! Plik dokumentacji '$DOCS_MD_FILE_PATH' nie istnieje"
 
       msg="🫵 Jeśli masz problem, najpierw zapoznaj się z dokumentacją \n"
-      msg+="    Dokumentacja: $CI_SERVER_URL/${GITLAB_CI_COMPONENTS_PATH:-$GITLAB_CI_REPOSITORY_PATH}/-/blob/$GITLAB_CI_REPOSITORY_BRANCH/$DOCS_MD_FILE_PATH"
+      msg+="    Dokumentacja: $CI_SERVER_URL/${GITLAB_CI_COMPONENTS_PATH:-$GITLAB_CI_REPOSITORY_PATH}/-/blob/${GITLAB_CI_COMPONENTS_VERSION:-$GITLAB_CI_REPOSITORY_BRANCH}/$DOCS_MD_FILE_PATH"
 
       if [ "$CI_JOB_STATUS" == 'success' ]; then
         banner green "$msg"

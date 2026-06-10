@@ -1,6 +1,7 @@
 ---
 spec:
   description: "Waliduje komunikaty commitów na gałęzi zgodnie ze standardem Conventional Commits."
+  component: [name, version, reference]
   inputs:
     job-name:
       type: string
@@ -64,6 +65,7 @@ include:
   variables:
     GITLAB_CI_COMPONENTS_PATH: dev.rachuna/pipelines/gitlab/components/bootstrap
     CONVENTIONAL_COMMITS_REGEXP: ^(build|chore|ci|docs|feat|fix|perf|refactor|style|test|revert|merge|release|hotfix|fixup|squash|wip|BREAKING CHANGE)(\([a-zA-Z0-9_-]+\))?!?:\s.+$
+    GITLAB_CI_COMPONENTS_VERSION: "$[[ component.reference ]]"
     DOCS_MD_FILE_PATH: templates/conventional-commits/README.md
   extends:
     - .before_script
