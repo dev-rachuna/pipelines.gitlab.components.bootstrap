@@ -22,6 +22,6 @@ include:
     - !reference [.helpers.gitlab-tools.script.sh]
     - $[[ inputs.before_script ]]
     - |
-      if [ -n "${CI_JOB_BEFORE_SCRIPT:-}" ]; then
-        eval "$CI_JOB_BEFORE_SCRIPT"
+      if [ -n "${JOB_BEFORE_SCRIPT:-}" ]; then
+        eval "$JOB_BEFORE_SCRIPT"
       fi

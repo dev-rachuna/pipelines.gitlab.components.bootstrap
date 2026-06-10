@@ -3,12 +3,32 @@
   - |
     declare -i term_width=130
 
+# Wyświetla niebieski komunikat pomocniczy.
+#
+# usage:
+#   h3 <treść>
+#
+# example:
+#   h3 "Uruchamianie helpera"
+#
+# outputs:
+#   Sformatowany komunikat na standardowym wyjściu
   - |
     h3() {
       echo -e "\033[1;34m---> $* \033[0m"
     }
     h3 "common/helpers/logger/script.sh.yml"
 
+# Wyświetla wyśrodkowany tekst pomiędzy kolorowymi liniami.
+#
+# usage:
+#   banner <kolor> <treść>
+#
+# example:
+#   banner green "Operacja zakończona powodzeniem"
+#
+# outputs:
+#   Kolorowy baner na standardowym wyjściu
   - |
     banner() {
       local color_name="$1"
@@ -66,6 +86,16 @@
       echo -e "$border"
     }
 
+# Wyświetla nagłówek pierwszego poziomu wyśrodkowany między separatorami.
+#
+# usage:
+#   h1 <treść>
+#
+# example:
+#   h1 "Etap wdrożenia"
+#
+# outputs:
+#   Sformatowany nagłówek na standardowym wyjściu
   - |
     h1() {
       declare border padding text
@@ -77,6 +107,16 @@
       echo -e "$border"
     }
 
+# Wyświetla nagłówek drugiego poziomu, gdy logger akceptuje poziom INFO.
+#
+# usage:
+#   h2 <treść>
+#
+# example:
+#   h2 "Pobieranie zależności"
+#
+# outputs:
+#   Sformatowany komunikat na standardowym wyjściu
   - |
     h2() {
       if logger "INFO"; then
@@ -84,16 +124,46 @@
       fi
     }
 
+# Wyświetla komunikat informacyjny w niebieskim banerze.
+#
+# usage:
+#   info <treść>
+#
+# example:
+#   info "Rozpoczęto przetwarzanie"
+#
+# outputs:
+#   Niebieski baner na standardowym wyjściu
   - |
     info() {
       banner blue "$1"
     }
 
+# Wyświetla ostrzeżenie w żółtym banerze.
+#
+# usage:
+#   warn <treść>
+#
+# example:
+#   warn "Brak opcjonalnej konfiguracji"
+#
+# outputs:
+#   Żółty baner na standardowym wyjściu
   - |
     warn() {
       banner yellow "$1"
     }
 
+# Wyświetla komunikat krytyczny w czerwonym banerze i przerywa job.
+#
+# usage:
+#   critical <treść>
+#
+# example:
+#   critical "Nie można kontynuować"
+#
+# outputs:
+#   Czerwony baner na standardowym wyjściu; kończy job kodem 1
   - |
     critical() {
       banner red "$1"

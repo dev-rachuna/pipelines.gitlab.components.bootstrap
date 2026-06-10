@@ -3,8 +3,7 @@
   - |
     h3 "common/helpers/gitlab-tools/script.sh.yml"
 
-# Dodaje wszystkie zmiany do indeksu, wykonuje amend ostatniego commita
-# i wypycha go do bieżącej gałęzi.
+# Dodaje wszystkie zmiany do indeksu, wykonuje amend ostatniego commit i wypycha go do bieżącej gałęzi.
 #
 # usage:
 #   gitlab_commit_amend

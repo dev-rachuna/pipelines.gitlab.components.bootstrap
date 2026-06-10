@@ -1,5 +1,18 @@
 ---
-.common.conventional-commits.script.sh:
+.bootstrap.conventional-commits.script.sh:
+
+# Pobiera tytuły commitów z bieżącej gałęzi względem domyślnej
+# gałęzi repozytorium.
+#
+# usage:
+#   get_commits
+#
+# example:
+#   get_commits
+#
+# outputs:
+#   Ustawia zmienną COMMITS z tytułami commitów do analizy.
+#   Pomija analizę na gałęzi domyślnej lub gdy nie znaleziono commitów.
   - |
     get_commits() {
         info "🔍 Get Commits"
@@ -21,6 +34,21 @@
           return 0
         fi
       }
+
+# Sprawdza tytuły commitów pod kątem zgodności ze wzorcem
+# Conventional Commits.
+#
+# usage:
+#   analyze_commits
+#
+# example:
+#   get_commits
+#   analyze_commits
+#
+# outputs:
+#   Wyświetla wynik walidacji każdego commita na standardowym wyjściu.
+#   Kończy job błędem, gdy co najmniej jeden tytuł nie pasuje do
+#   CONVENTIONAL_COMMITS_REGEXP.
   - |
     analyze_commits() {
       info "📃 Analyze Conventional Commits"

@@ -21,7 +21,7 @@ include:
     - !reference [.helpers.job-docs.script.sh]
     - $[[ inputs.after_script ]]
     - |
-      if [ -n "${CI_JOB_AFTER_SCRIPT:-}" ]; then
-        eval "$CI_JOB_AFTER_SCRIPT"
+      if [ -n "${JOB_AFTER_SCRIPT:-}" ]; then
+        eval "$JOB_AFTER_SCRIPT"
       fi
 

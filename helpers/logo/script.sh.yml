@@ -3,6 +3,17 @@
   - |
     h3 "common/helpers/logo/script.sh.yml"
 
+# Wyświetla logo pipeline'u wraz z jego typem i gałęzią
+# repozytorium konfiguracji CI.
+#
+# usage:
+#   logo
+#
+# example:
+#   logo
+#
+# outputs:
+#   print Logo z PIPELINE_TYPE i GITLAB_CI_REPOSITORY_BRANCH na standardowym wyjściu
   - |
     logo(){
       echo -e "    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░"
