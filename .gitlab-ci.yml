@@ -1,27 +1,4 @@
 include:
-  - component: $CI_SERVER_FQDN/$CI_PROJECT_PATH/bootstrap@$CI_COMMIT_SHA
-    inputs:
-      template-name: .bootstrap-test
-
-stages:
-  - test
-  - release
-
-test-component:
-  extends: .bootstrap-test
-  stage: test
-  script:
-    - bootstrap_info
-    - test "$CI_PROJECT_PATH" != ""
-    - echo "bootstrap component test passed"
-
-create-release:
-  stage: release
-  image: registry.gitlab.com/gitlab-org/cli:latest
-  script:
-    - echo "Creating release ${CI_COMMIT_TAG}"
-  rules:
-    - if: '$CI_COMMIT_TAG =~ /^[0-9]+\.[0-9]+\.[0-9]+$/'
-  release:
-    tag_name: $CI_COMMIT_TAG
-    description: "Release ${CI_COMMIT_TAG} of ${CI_PROJECT_PATH}"
+  - project: 'dev.rachuna/pipelines/gitlab/gitlab-ci'
+    file: '.gitlab-ci.yml'
+    ref: feat/init
