@@ -7,6 +7,8 @@ Waliduje tytuły commitów na bieżącej gałęzi zgodnie ze standardem
 
 ```yaml
 include:
+  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/_before_script@1.0.0
+  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/_after_script@1.0.0
   - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/conventional-commits@1.0.0
     inputs:
       job-stage: validate

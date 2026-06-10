@@ -29,9 +29,9 @@ Helper jest wstrzykiwany w `after_script`, żeby działał również po nieudany
 
 ```yaml
 after_script:
-  - !reference [.common.job-prepare.script.sh]
-  - !reference [.common.logger.script.sh]  - !reference [.common.job-docs.script.sh]   # ← wyświetla link do dokumentacji
-  - !reference [.common.mój-job.after_script.sh]
+  - !reference [.helpers.logger.script.sh]
+  - !reference [.helpers.job-prepare.script.sh]
+  - !reference [.helpers.job-docs.script.sh]   # ← wyświetla link do dokumentacji
 ```
 
 ## Uwagi

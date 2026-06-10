@@ -41,14 +41,15 @@ Helper jest wstrzykiwany jako pierwszy element `before_script` i `after_script` 
 
 ```yaml
 before_script:
-  - !reference [.common.job-prepare.sh]   # ← musi być pierwszy
-  - !reference [.common.logger.script.sh]  - !reference [.common.logo.script.sh]
-  - !reference [.common.gitlab-tools.sh]
-  - !reference [.common.mój-job.before_script.sh]
+  - !reference [.helpers.logger.script.sh]
+  - !reference [.helpers.job-prepare.script.sh]
+  - !reference [.helpers.logo.script.sh]
+  - !reference [.helpers.gitlab-tools.script.sh]
 
 after_script:
-  - !reference [.common.job-prepare.sh]   # ← musi być pierwszy (after_script to nowy proces)
-  - !reference [.common.logger.script.sh]  - !reference [.common.job-docs.script.sh]
+  - !reference [.helpers.logger.script.sh]
+  - !reference [.helpers.job-prepare.script.sh]
+  - !reference [.helpers.job-docs.script.sh]
 ```
 
 ## Uwagi

@@ -45,7 +45,7 @@ spec:
       type: string
       default: ":"
     job-after-script:
-      description: "Dodatkowy skrypt wykonywany po walidacją Conventional Commits."
+      description: "Dodatkowy skrypt wykonywany po walidacji Conventional Commits."
       type: string
       default: ":"
 
@@ -77,4 +77,3 @@ include:
   after_script:
     - !reference [.after_script, after_script]
     - $[[ inputs.job-after-script ]]
-  

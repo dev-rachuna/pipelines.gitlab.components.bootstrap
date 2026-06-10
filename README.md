@@ -1,117 +1,74 @@
-# <img src=".gitlab/gitlab.png" alt="gitlab" height="30"/> bootstrap
+# <img src=".gitlab/gitlab.png" alt="GitLab" height="30"/> Bootstrap CI/CD Components
 
 ::include{file=.gitlab/badges.md}
 
-Zestaw komponentów GitLab CI/CD ujednolicających przygotowanie i zakończenie
-jobów. Komponenty dostarczają wspólny obraz wykonawczy, funkcje logowania,
-inicjalizację środowiska, baner pipeline, narzędzia GitLab oraz odnośnik do
-dokumentacji joba.
+Zestaw komponentów GitLab CI/CD do przygotowania jobów, walidacji kodu i
+automatycznego wersjonowania projektów.
 
-Repozytorium udostępnia dwa niezależne komponenty:
+## Komponenty
 
-| Komponent | Ukryty job | Zastosowanie |
+| Komponent | Zastosowanie | Domyślny job lub ukryty job |
 |---|---|---|
-| `before_script` | `.before_script` | Przygotowanie środowiska przed `script` |
-| `after_script` | `.after_script` | Wyświetlenie dokumentacji po zakończeniu `script` |
+| [`_before_script`](templates/_before_script/README.md) | Przygotowanie środowiska i helperów przed `script` | `.before_script` |
+| [`_after_script`](templates/_after_script/README.md) | Wyświetlenie statusu i dokumentacji po `script` | `.after_script` |
+| [`conventional-commits`](templates/conventional-commits/README.md) | Walidacja tytułów commitów | `conventional-commits` |
+| [`shellcheck`](templates/shellcheck/README.md) | Walidacja skryptów powłoki | `shellcheck` |
+| [`yamllint`](templates/yamllint/README.md) | Walidacja plików YAML | `yamllint` |
+| [`versioning`](templates/versioning/README.md) | Semantic Release, wersja i changelog | `versioning` |
 
-## Użycie
+## Helpery
+
+| Helper | Zastosowanie |
+|---|---|
+| [`logger`](helpers/logger/README.md) | Formatowane logowanie, nagłówki, bannery i komunikaty krytyczne |
+| [`job-prepare`](helpers/job-prepare/README.md) | Inicjalizacja środowiska i danych repozytorium CI |
+| [`logo`](helpers/logo/README.md) | Wyświetlanie banera z typem pipeline i gałęzią |
+| [`gitlab-tools`](helpers/gitlab-tools/README.md) | Funkcje GitLab API, Git i konfiguracja SSH |
+| [`job-docs`](helpers/job-docs/README.md) | Wyświetlanie statusu joba i odnośnika do dokumentacji |
+
+Wszystkie komponenty są wersjonowane wspólnie. Dla stabilnych pipeline należy
+używać pełnego taga SemVer, na przykład `1.0.0`.
+
+## Szybki start
+
+Komponenty jobów korzystają z ukrytych jobów `.before_script` i
+`.after_script`. Należy dołączyć je razem z wybranymi walidatorami:
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/before_script@1.0.0
-    inputs:
-      image: registry.gitlab.com/dev.rachuna/artifacts/containers/python:1.2.0
-      before_script:
-        - echo "Dodatkowe przygotowanie joba"
+  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/_before_script@1.0.0
+  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/_after_script@1.0.0
 
-  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/after_script@1.0.0
-    inputs:
-      image: registry.gitlab.com/dev.rachuna/artifacts/containers/python:1.2.0
-      after_script:
-        - echo "Dodatkowe sprzątanie po jobie"
+  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/conventional-commits@1.0.0
 
-verify:
-  extends:
-    - .before_script
-    - .after_script
-  variables:
-    PIPELINE_TYPE: CI
-    PROJECT_TYPE: gitlab-pipelines
-    DOCS_MD_FILE_PATH: docs/verify/README.md
-    CI_JOB_BEFORE_SCRIPT: |
-      - echo "Dodatkowe przygotowanie joba"
-    CI_JOB_AFTER_SCRIPT: |
-      - echo "Dodatkowe sprzątanie po jobie"
-  script:
-    - h1 "Weryfikacja"
-    - echo "Uruchamiam testy"
+  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/shellcheck@1.0.0
+    inputs:
+      job-before-script: |
+        echo "Przygotowanie plików do analizy"
+
+  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/yamllint@1.0.0
+
+  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/versioning@1.0.0
+    inputs:
+      job-dry-run: true
 ```
 
-W pipeline produkcyjnym należy wskazywać opublikowany tag SemVer zamiast
-gałęzi lub `latest`.
+> [!warning]
+> Komponent `versioning` wymaga zmiennej chronionej `GITLAB_TOKEN`. Operacje publikujące changelog wymagają również `GITLAB_USER_NAME` i `GITLAB_USER_EMAIL`.
 
-## `before_script`
+## Zmienne sterujące
 
-Komponent rozszerza job o następujące kroki, wykonywane w podanej kolejności:
-
-1. Ładuje funkcje logowania z helpera `logger`.
-2. Inicjalizuje środowisko przez `job-prepare`.
-3. Wyświetla baner za pomocą helpera `logo`.
-4. Ładuje funkcje helpera `gitlab-tools`.
-5. Uruchamia polecenia przekazane przez input `before_script`.
-6. Uruchamia zawartość zmiennej `CI_JOB_BEFORE_SCRIPT`, jeśli jest ustawiona.
-
-### Inputs
-
-| Input | Typ | Wartość domyślna | Opis |
-|---|---|---|---|
-| `image` | string | `registry.gitlab.com/dev.rachuna/artifacts/containers/python:1.2.0` | Obraz joba |
-| `before_script` | array | `[]` | Dodatkowe polecenia wykonywane po helperach |
-
-## `after_script`
-
-Komponent rozszerza job o następujące kroki:
-
-1. Ładuje funkcje logowania z helpera `logger`.
-2. Ponownie inicjalizuje środowisko przez `job-prepare`, ponieważ GitLab
-   wykonuje `after_script` w osobnym procesie.
-3. Wyświetla wynik joba oraz link do jego dokumentacji przez `job-docs`.
-4. Uruchamia polecenia przekazane przez input `after_script`.
-5. Uruchamia zawartość zmiennej `CI_JOB_AFTER_SCRIPT`, jeśli jest ustawiona.
-
-### Inputs
-
-| Input | Typ | Wartość domyślna | Opis |
-|---|---|---|---|
-| `image` | string | `registry.gitlab.com/dev.rachuna/artifacts/containers/python:1.2.0` | Obraz joba |
-| `after_script` | array | komunikat z nazwą projektu i refem | Dodatkowe polecenia wykonywane po helperach |
-
-## Zmienne
-
-| Zmienna | Wymagana | Opis |
-|---|---|---|
-| `CI_CONFIG_PATH` | tak | Źródło informacji o repozytorium konfiguracji CI; GitLab ustawia ją automatycznie |
-| `PIPELINE_TYPE` | dla `before_script` | Typ pipeline wyświetlany w banerze, na przykład `CI` lub `CD` |
-| `DOCS_MD_FILE_PATH` | dla `after_script` | Ścieżka do dokumentacji joba |
-| `PROJECT_TYPE` | nie | Dla wartości `gitlab-pipelines` helper sprawdza, czy plik dokumentacji istnieje |
-| `CI_JOB_BEFORE_SCRIPT` | nie | Dodatkowy skrypt uruchamiany na końcu `before_script` |
-| `CI_JOB_AFTER_SCRIPT` | nie | Dodatkowy skrypt uruchamiany na końcu `after_script` |
-
-Zmienne `CI_JOB_BEFORE_SCRIPT` i `CI_JOB_AFTER_SCRIPT` są wykonywane przez
-`eval`. Powinny pochodzić wyłącznie z zaufanej konfiguracji CI/CD.
-
-## Dostępne helpery
-
-| Helper | Odpowiedzialność |
+| Zmienna | Efekt dla wartości `false` |
 |---|---|
-| `logger` | Funkcje `banner`, `h1`, `h2`, `h3`, `info`, `warn` i `critical` |
-| `job-prepare` | Tryb strict mode, parsowanie `CI_CONFIG_PATH` i funkcja `check_var` |
-| `logo` | Baner z typem pipeline i gałęzią repozytorium CI |
-| `gitlab-tools` | Funkcje `gitlab_commit_amend`, `run_new_pipeline` i `gitlab_ssh_key` |
-| `job-docs` | Link do dokumentacji oraz status joba |
+| `ENABLED_CONVENTIONAL_COMMITS` | Wyłącza job Conventional Commits |
+| `ENABLED_SHELLCHECK` | Wyłącza job ShellCheck |
+| `ENABLED_YAMLLINT` | Wyłącza job yamllint |
+| `ENABLED_VERSIONING` | Wyłącza job versioning |
 
-Szczegółowy opis helperów i ich dodatkowych wymagań znajduje się w katalogu
-[`helpers`](helpers/).
+Każdy gotowy job udostępnia inputy `job-name`, `job-stage`, `job-image`,
+`job-rules`, `job-needs`, `job-resource-group`, `job-before-script` i
+`job-after-script`. Szczegółowe wartości znajdują się w dokumentacji
+poszczególnych komponentów poniżej.
 
 ## Struktura repozytorium
 
@@ -123,24 +80,17 @@ Szczegółowy opis helperów i ich dodatkowych wymagań znajduje się w katalogu
 │   ├── job-prepare/
 │   ├── logger/
 │   └── logo/
-└── templates/
-    ├── after_script/template.yml
-    └── before_script/template.yml
+├── templates/
+│   ├── _after_script/
+│   ├── _before_script/
+│   ├── conventional-commits/
+│   ├── shellcheck/
+│   ├── versioning/
+│   └── yamllint/
+├── .gitlab-ci.yml
+├── LICENSE
+└── README.md
 ```
-
-Każdy komponent znajduje się w `templates/<nazwa>/template.yml`, zgodnie ze
-strukturą wymaganą przez GitLab CI/CD Catalog. Pliki helperów są dołączane
-lokalnie przez komponenty i udostępniają ukryte fragmenty konfiguracji
-wykorzystywane przez `!reference`.
-
-## Wydanie
-
-1. Połącz zmiany z gałęzią domyślną.
-2. Utwórz tag zgodny z SemVer, na przykład `1.0.0`.
-3. Pipeline powinien zweryfikować komponenty i utworzyć GitLab Release.
-
-Aby publikować wydania w katalogu, w ustawieniach projektu GitLab musi być
-włączona opcja **CI/CD Catalog project**.
 
 ---
 

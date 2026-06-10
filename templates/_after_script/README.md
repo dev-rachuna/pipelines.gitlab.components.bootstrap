@@ -34,7 +34,7 @@ Komponent wykonuje kolejne kroki po skrypcie joba:
    uruchamia `after_script` w osobnym procesie.
 3. Wyświetla status joba i link do dokumentacji przez `job-docs`.
 4. Wykonuje polecenia przekazane przez input `after_script`.
-5. Wykonuje zawartość zmiennej `CI_JOB_AFTER_SCRIPT`, jeżeli jest ustawiona.
+5. Wykonuje zawartość zmiennej `JOB_AFTER_SCRIPT`, jeżeli jest ustawiona.
 
 Sekcja `after_script` jest wykonywana również wtedy, gdy główny skrypt joba
 zakończy się błędem.
@@ -54,7 +54,7 @@ zakończy się błędem.
 | `DOCS_MD_FILE_PATH` | tak | Ścieżka do pliku dokumentacji joba |
 | `GITLAB_CI_COMPONENTS_PATH` | nie | Ścieżka repozytorium komponentów używana w URL-u dokumentacji |
 | `PROJECT_TYPE` | nie | Dla `gitlab-pipelines` włącza sprawdzenie istnienia pliku dokumentacji |
-| `CI_JOB_AFTER_SCRIPT` | nie | Dodatkowy skrypt Bash wykonywany na końcu `after_script` |
+| `JOB_AFTER_SCRIPT` | nie | Dodatkowy skrypt Bash wykonywany na końcu `after_script` |
 
 Gdy `GITLAB_CI_COMPONENTS_PATH` nie jest ustawiona, URL dokumentacji używa
 ścieżki `GITLAB_CI_REPOSITORY_PATH` wyznaczonej przez `job-prepare`.
@@ -67,7 +67,7 @@ verify:
     - .after_script
   variables:
     DOCS_MD_FILE_PATH: docs/verify/README.md
-    CI_JOB_AFTER_SCRIPT: |
+    JOB_AFTER_SCRIPT: |
       echo "Zakończono job $CI_JOB_NAME"
   script:
     - echo "Weryfikacja"
@@ -76,7 +76,7 @@ verify:
 ## Uwagi
 
 - Input `after_script` przyjmuje tablicę poleceń GitLab CI/CD.
-- `CI_JOB_AFTER_SCRIPT` jest wykonywany przez `eval` i powinien pochodzić
+- `JOB_AFTER_SCRIPT` jest wykonywany przez `eval` i powinien pochodzić
   wyłącznie z zaufanej konfiguracji.
 - `after_script` działa w osobnym procesie, dlatego zmiany środowiska wykonane
   wcześniej w `before_script` nie są automatycznie dostępne.

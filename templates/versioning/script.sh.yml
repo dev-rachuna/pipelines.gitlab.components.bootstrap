@@ -86,8 +86,7 @@
   - |
     push_changelog() {
       if [[ -f CHANGELOG.md && "$ARTIFACTS_TYPE" == "release" && "$VERSIONING_DRY_RUN" != "true" ]]; then
-        IS_CHANGE_CHANGELOG=$(git diff --quiet -- CHANGELOG.md)
-        if [ "$IS_CHANGE_CHANGELOG" ]; then
+        if ! git diff --quiet -- CHANGELOG.md; then
           info "📄 Pushing changelog to GitLab"
           git config user.email "${GITLAB_USER_EMAIL}"
           git config user.name "${GITLAB_USER_NAME}"

@@ -64,7 +64,6 @@ Helper jest wstrzykiwany przez `before_script` każdego joba:
 
 ```yaml
 before_script:
-  - !reference [.common.job-prepare.script.sh]
-  - !reference [.common.gitlab-tools.script.sh]   # ← funkcje dostępne od tej chwili
-  - !reference [.common.mój-job.before_script.sh]
+  - !reference [.helpers.job-prepare.script.sh]
+  - !reference [.helpers.gitlab-tools.script.sh]   # ← funkcje dostępne od tej chwili
 ```

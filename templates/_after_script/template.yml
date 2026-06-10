@@ -1,12 +1,12 @@
 ---
 spec:
-  description: "Bazowa konfiguracja joba dla pipeline GitLab CI/CD."
+  description: "Wyświetla status i dokumentację po wykonaniu skryptu joba."
   inputs:
     image:
-      description: "Obraz bazowy kontenera"
+      description: "Obraz kontenera przypisywany do joba konsumenta."
       default: "registry.gitlab.com/dev.rachuna/artifacts/containers/python:1.2.0"
     after_script:
-      description: "Polecenia wykonywane przed skryptem joba konsumenta."
+      description: "Dodatkowe polecenia wykonywane po wyświetleniu dokumentacji."
       type: array
       default: []
 ---
@@ -24,4 +24,3 @@ include:
       if [ -n "${JOB_AFTER_SCRIPT:-}" ]; then
         eval "$JOB_AFTER_SCRIPT"
       fi
-

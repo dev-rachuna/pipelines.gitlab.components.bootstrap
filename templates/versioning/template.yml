@@ -1,6 +1,7 @@
 ---
 spec:
   description: "Wyznacza wersję projektu i publikuje wydanie za pomocą Semantic Release."
+  component: [name, version, reference]
   inputs:
     job-name:
       type: string
@@ -27,7 +28,7 @@ spec:
       description: "Reguły określające, kiedy job zostanie dodany do pipeline."
       type: array
       default:
-        - if: '$ENABLED_YAMLLINT == "false"'
+        - if: '$ENABLED_VERSIONING == "false"'
           when: never
         - when: on_success
     job-needs:
@@ -68,11 +69,11 @@ include:
     - .after_script
   variables:
     GITLAB_CI_COMPONENTS_PATH: dev.rachuna/pipelines/gitlab/components/bootstrap
-    GITLAB_CI_COMPONENTS_VERSION: feat/convensional
+    GITLAB_CI_COMPONENTS_VERSION: "$[[ component.reference ]]"
     RELEASERC_PATH: templates/versioning/.releaserc.cjs
     VERSIONING_DRY_RUN: "$[[ inputs.job-dry-run ]]"
     NODE_EXTRA_CA_CERTS: /etc/ssl/certs/ca-certificates.crt
-    DOCS_MD_FILE_PATH: templates/yamllint/README.md
+    DOCS_MD_FILE_PATH: templates/versioning/README.md
   before_script:
     - !reference [.before_script, before_script]
     - |
@@ -81,6 +82,9 @@ include:
       check_var "NODE_EXTRA_CA_CERTS"
       check_var "DOCS_MD_FILE_PATH"
       check_var "GITLAB_TOKEN"
+      echo "Component reference: $[[ component.name ]]"
+      echo "Component reference: $[[ component.version ]]"
+      echo "Component reference: $[[ component.reference ]]"
     - $[[ inputs.job-before-script ]]
   script: !reference [.bootstrap.versioning.script.sh]
   after_script:

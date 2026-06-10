@@ -80,9 +80,9 @@ Helper jest wstrzykiwany po `job-prepare` w `before_script` i `after_script`:
 
 ```yaml
 before_script:
-  - !reference [.common.job-prepare.sh]
-  - !reference [.common.logger.script.sh]   # ← funkcje dostępne od tej chwili
-  - !reference [.common.logo.script.sh]
+  - !reference [.helpers.logger.script.sh]   # ← funkcje dostępne od tej chwili
+  - !reference [.helpers.job-prepare.script.sh]
+  - !reference [.helpers.logo.script.sh]
 ```
 
 Przykład użycia w skrypcie joba:

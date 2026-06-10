@@ -8,9 +8,11 @@ uruchamia [Semantic Release](https://semantic-release.gitbook.io/semantic-releas
 
 ```yaml
 include:
+  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/_before_script@1.0.0
+  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/_after_script@1.0.0
   - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/versioning@1.0.0
     inputs:
-      job-stage: .pre
+      job-stage: publish
       job-dry-run: true
       job-before-script: |
         echo "Przygotowanie wersjonowania"
@@ -39,9 +41,9 @@ gałęzi lub `latest`.
 | Input | Typ | Wartość domyślna | Opis |
 |---|---|---|---|
 | `job-name` | string | `versioning` | Nazwa tworzonego joba |
-| `job-stage` | string | `.pre` | Etap pipeline, na którym zostanie uruchomiony job |
-| `job-image` | string | `registry.gitlab.com/dev.rachuna/artifacts/containers/python:1.2.0` | Obraz kontenera joba |
-| `job-rules` | array | wyłączenie dla `ENABLED_YAMLLINT=false`, w pozostałych przypadkach `on_success` | Reguły dodawania joba do pipeline |
+| `job-stage` | string | `publish` | Etap pipeline, na którym zostanie uruchomiony job |
+| `job-image` | string | `registry.gitlab.com/dev.rachuna/artifacts/containers/semantic-release:1.2.0` | Obraz kontenera joba |
+| `job-rules` | array | wyłączenie dla `ENABLED_VERSIONING=false`, w pozostałych przypadkach `on_success` | Reguły dodawania joba do pipeline |
 | `job-needs` | array | `[]` | Lista zależności przekazywana do `needs` |
 | `job-resource-group` | string | `${CI_PIPELINE_ID}-${CI_JOB_NAME}` | Grupa zasobów ograniczająca równoległe wykonanie joba |
 | `job-before-script` | string | `:` | Dodatkowy skrypt wykonywany przed wersjonowaniem |
@@ -60,12 +62,14 @@ Dostępne wartości `job-stage`: `.pre`, `prepare`, `validate`, `dependency`,
 | `CI_COMMIT_BRANCH` | GitLab CI | Gałąź docelowa dla publikacji `CHANGELOG.md` |
 | `GITLAB_USER_EMAIL` | CI/CD Variables projektu | Adres e-mail autora commita aktualizującego changelog |
 | `GITLAB_USER_NAME` | CI/CD Variables projektu | Nazwa autora commita aktualizującego changelog |
+| `ENABLED_VERSIONING` | CI/CD Variables projektu | Ustawienie `false` wyłącza job przy domyślnych regułach |
 
 Komponent ustawia także:
 
 | Zmienna | Wartość | Opis |
 |---|---|---|
 | `RELEASERC_PATH` | `templates/versioning/.releaserc.cjs` | Ścieżka domyślnej konfiguracji Semantic Release |
+| `GITLAB_CI_COMPONENTS_VERSION` | referencja komponentu | Tag, gałąź lub SHA wersji komponentu używane do pobrania konfiguracji |
 | `VERSIONING_DRY_RUN` | wartość `job-dry-run` | Steruje uruchomieniem z `--dry-run` |
 | `NODE_EXTRA_CA_CERTS` | `/etc/ssl/certs/ca-certificates.crt` | Certyfikaty CA używane przez Node.js |
 | `DOCS_MD_FILE_PATH` | ustawiona przez komponent | Ścieżka dokumentacji wyświetlanej przez `job-docs` |

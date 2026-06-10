@@ -32,7 +32,7 @@ Komponent wykonuje kolejne kroki przed skryptem joba:
 3. Wyświetla baner pipeline za pomocą helpera `logo`.
 4. Ładuje funkcje GitLab i SSH z helpera `gitlab-tools`.
 5. Wykonuje polecenia przekazane przez input `before_script`.
-6. Wykonuje zawartość zmiennej `CI_JOB_BEFORE_SCRIPT`, jeżeli jest ustawiona.
+6. Wykonuje zawartość zmiennej `JOB_BEFORE_SCRIPT`, jeżeli jest ustawiona.
 
 ## Inputs
 
@@ -47,7 +47,7 @@ Komponent wykonuje kolejne kroki przed skryptem joba:
 |---|---|---|
 | `CI_CONFIG_PATH` | tak | Źródło danych repozytorium przetwarzane przez `job-prepare` |
 | `PIPELINE_TYPE` | tak | Typ pipeline wyświetlany przez helper `logo`, na przykład `CI` lub `CD` |
-| `CI_JOB_BEFORE_SCRIPT` | nie | Dodatkowy skrypt Bash wykonywany na końcu `before_script` |
+| `JOB_BEFORE_SCRIPT` | nie | Dodatkowy skrypt Bash wykonywany na końcu `before_script` |
 
 Przykład przekazania skryptu przez zmienną:
 
@@ -56,7 +56,7 @@ verify:
   extends:
     - .before_script
   variables:
-    CI_JOB_BEFORE_SCRIPT: |
+    JOB_BEFORE_SCRIPT: |
       check_var "PACKAGE_NAME"
       echo "Przygotowanie $PACKAGE_NAME"
   script:
@@ -66,7 +66,7 @@ verify:
 ## Uwagi
 
 - Input `before_script` przyjmuje tablicę poleceń GitLab CI/CD.
-- `CI_JOB_BEFORE_SCRIPT` jest wykonywany przez `eval` i powinien pochodzić
+- `JOB_BEFORE_SCRIPT` jest wykonywany przez `eval` i powinien pochodzić
   wyłącznie z zaufanej konfiguracji.
 - Job konsumenta może nadpisać pole `image`; w przeciwnym razie używany jest
   obraz przekazany do komponentu.

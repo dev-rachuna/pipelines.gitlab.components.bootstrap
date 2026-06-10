@@ -7,6 +7,8 @@ narzędzia [yamllint](https://yamllint.readthedocs.io/).
 
 ```yaml
 include:
+  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/_before_script@1.0.0
+  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/_after_script@1.0.0
   - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/yamllint@1.0.0
     inputs:
       job-stage: validate

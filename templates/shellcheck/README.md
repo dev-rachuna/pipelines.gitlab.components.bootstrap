@@ -1,53 +1,72 @@
-# Job: shellcheck
+# Komponent: shellcheck
 
-Waliduje jakość skryptów bash w plikach `*.sh` oraz plikach wykonywalnych
-znalezionych w repozytorium.
+Waliduje skrypty Bash w plikach `*.sh` oraz regularnych plikach z ustawionym
+bitem wykonywalności za pomocą narzędzia ShellCheck.
+
+## Użycie
+
+```yaml
+include:
+  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/_before_script@1.0.0
+  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/_after_script@1.0.0
+  - component: $CI_SERVER_FQDN/dev.rachuna/pipelines/gitlab/components/bootstrap/shellcheck@1.0.0
+    inputs:
+      job-stage: validate
+      job-before-script: |
+        echo "Przygotowanie plików do analizy"
+```
 
 ## Co robi
 
-Uruchamia `shellcheck --shell=bash` na każdym pliku `*.sh` oraz każdym pliku
-z ustawionym bitem wykonywalności znalezionym rekurencyjnie w repozytorium.
-Katalog `.git` jest pomijany. Błąd shellcheck kończy job jako failed
-(`critical`).
+1. Wykonuje skrypt przekazany przez input `job-before-script`.
+2. Wyszukuje rekurencyjnie pliki `*.sh` oraz pliki wykonywalne.
+3. Pomija zawartość katalogu `.git`.
+4. Uruchamia `shellcheck --shell=bash` dla każdego znalezionego pliku.
+5. Kończy job po pierwszym błędzie ShellCheck.
+6. Wykonuje skrypt przekazany przez input `job-after-script`.
 
-## Kiedy się uruchamia
+## Inputs
 
-| Warunek | Zachowanie |
-|---------|-----------|
-| CI pipeline + branch != `main` + zmiana `**/*.sh.yml` lub `**/*.sh` względem `main` | Automatycznie (`when: on_success`) |
-| CD pipeline (`PIPELINE_TYPE=CD`) | Nigdy |
-| Push na `main` | Nigdy |
-| Brak zmian w `*.sh` / `*.sh.yml` | Nigdy |
+| Input | Typ | Wartość domyślna | Opis |
+|---|---|---|---|
+| `job-name` | string | `shellcheck` | Nazwa tworzonego joba |
+| `job-stage` | string | `validate` | Etap pipeline, na którym zostanie uruchomiony job |
+| `job-image` | string | `registry.gitlab.com/dev.rachuna/artifacts/containers/python:1.2.0` | Obraz kontenera joba |
+| `job-rules` | array | wyłączenie dla `ENABLED_SHELLCHECK=false`, w pozostałych przypadkach `on_success` | Reguły dodawania joba do pipeline |
+| `job-needs` | array | `[]` | Lista zależności przekazywana do `needs` |
+| `job-resource-group` | string | `${CI_PIPELINE_ID}-${CI_JOB_NAME}` | Grupa zasobów ograniczająca równoległe wykonanie joba |
+| `job-before-script` | string | `:` | Dodatkowy skrypt wykonywany przed walidacją |
+| `job-after-script` | string | `:` | Dodatkowy skrypt wykonywany po walidacji |
 
-## Zmienne wejściowe
+## Reguły
 
-| Zmienna | Domyślna | Wymagana | Opis |
-|---------|----------|----------|------|
-| `DOCS_MD_FILE_PATH` | `common/jobs/shellcheck/README.md` | ✔️ | Ścieżka do dokumentacji joba (helper `job-docs`) |
+Domyślnie job nie jest dodawany do pipeline, gdy zmienna
+`ENABLED_SHELLCHECK` ma wartość `false`. W pozostałych przypadkach jest
+uruchamiany z `when: on_success`. Domyślne reguły można zastąpić przez input
+`job-rules`.
 
-## Logika skryptu
+## Logika wyszukiwania
 
 ```bash
-while IFS= read -r -d '' file_sh; do
-  shellcheck --shell=bash "$file_sh" || critical "❌ shellcheck wykrył błędy"
-done < <(find ./ -path './.git' -prune -o -type f \( -name "*.sh" -o -perm /111 \) -print0)
+find ./ -path './.git' -prune -o -type f \
+  \( -name "*.sh" -o -perm /111 \) -print0
 ```
 
-Iteruje po plikach `*.sh` i plikach wykonywalnych przez process substitution
-(`< <(find ...)`). Przy pierwszym błędzie shellcheck job kończy się jako
-failed.
+Plik pasujący jednocześnie do obu warunków jest analizowany tylko raz.
+
+## Zmienne
+
+| Zmienna | Pochodzenie | Opis |
+|---|---|---|
+| `DOCS_MD_FILE_PATH` | komponent | Ścieżka do dokumentacji komponentu |
+| `GITLAB_CI_COMPONENTS_PATH` | komponent | Ścieżka repozytorium komponentów używana do budowania URL-a dokumentacji |
+| `ENABLED_SHELLCHECK` | CI/CD Variables projektu | Ustawienie `false` wyłącza job przy domyślnych regułach |
 
 ## Lokalne uruchomienie
 
 ```bash
-# Instalacja
-apt-get install shellcheck   # lub: brew install shellcheck
-
-# Sprawdzenie jednego pliku
-shellcheck --shell=bash common/helpers/logger.sh
-
-# Sprawdzenie wszystkich (jak robi job)
 while IFS= read -r -d '' file_sh; do
   shellcheck --shell=bash "$file_sh"
-done < <(find ./ -path './.git' -prune -o -type f \( -name "*.sh" -o -perm /111 \) -print0)
+done < <(find ./ -path './.git' -prune -o -type f \
+  \( -name "*.sh" -o -perm /111 \) -print0)
 ```
