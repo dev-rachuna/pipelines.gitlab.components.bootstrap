@@ -48,9 +48,6 @@ spec:
       default: ":"
 
 ---
-include:
-  - local: templates/shellcheck/script.sh.yml
-
 "$[[ inputs.job-name ]]":
   image: "$[[ inputs.job-image ]]"
   stage: "$[[ inputs.job-stage ]]"
@@ -62,12 +59,12 @@ include:
   extends:
     - .before_script
     - .after_script
+  variables:
+    GITLAB_CI_COMPONENTS_PATH: dev.rachuna/pipelines/gitlab/components/bootstrap
+    DOCS_MD_FILE_PATH: templates/yamllint/README.md
   before_script:
     - !reference [.before_script, before_script]
     - $[[ inputs.job-before-script ]]
-  after_script:
-    - !reference [.after_script, after_script]
-    - $[[ inputs.job-after-script ]]
   script:
     - |
       cat > .yamllint.yml << 'EOF'
@@ -81,6 +78,6 @@ include:
     - |
       info "🚀 yamllint"
       yamllint .
-  variables:
-    GITLAB_CI_COMPONENTS_PATH: dev.rachuna/pipelines/gitlab/components/bootstrap
-    DOCS_MD_FILE_PATH: templates/yamllint/README.md
+  after_script:
+    - !reference [.after_script, after_script]
+    - $[[ inputs.job-after-script ]]

@@ -62,13 +62,13 @@ include:
   extends:
     - .before_script
     - .after_script
-  before_script:
-    - !reference [.before_script, before_script]
-    - $[[ inputs.job-before-script ]]
-  after_script:
-    - !reference [.after_script, after_script]
-    - $[[ inputs.job-after-script ]]
-  script: !reference [.bootstrap.shellcheck.script.sh]
   variables:
     GITLAB_CI_COMPONENTS_PATH: dev.rachuna/pipelines/gitlab/components/bootstrap
     DOCS_MD_FILE_PATH: templates/shellcheck/README.md
+  before_script:
+    - !reference [.before_script, before_script]
+    - $[[ inputs.job-before-script ]]
+  script: !reference [.bootstrap.shellcheck.script.sh]
+  after_script:
+    - !reference [.after_script, after_script]
+    - $[[ inputs.job-after-script ]]

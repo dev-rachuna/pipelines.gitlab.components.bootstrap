@@ -1,0 +1,102 @@
+---
+.bootstrap.versioning.script.sh:
+
+# Sprawdza, czy projekt zawiera plik .releaserc.cjs. Jeżeli plik nie istnieje,
+# pobiera domyślną konfigurację Semantic Release z repozytorium komponentów.
+#
+# usage:
+#   check_exist_releaserc
+#
+# example:
+#   check_exist_releaserc
+#
+# outputs:
+#   Tworzy plik .releaserc.cjs w bieżącym katalogu, jeżeli nie został
+#   dostarczony przez projekt. Do pobrania używa CI_API_V4_URL,
+#   RELEASERC_PATH, GITLAB_CI_COMPONENTS_VERSION oraz GITLAB_TOKEN.
+  - |
+    check_exist_releaserc() {
+      if [ ! -f ".releaserc.cjs" ]; then
+        info "⚙️  Download default .releaserc.cjs"
+
+        VERSIONING_RELEASERC_URL="${CI_API_V4_URL}/projects/83078302/repository/files/${RELEASERC_PATH//\//%2F}/raw?ref=${GITLAB_CI_COMPONENTS_VERSION}"
+        echo "VERSIONING_RELEASERC_URL: ${VERSIONING_RELEASERC_URL}"
+        curl -sk -H "PRIVATE-TOKEN: ${GITLAB_TOKEN}" "${VERSIONING_RELEASERC_URL}" --output ".releaserc.cjs";
+      fi
+    }
+    check_exist_releaserc
+
+# Wyznacza wersję kandydującą na podstawie najnowszego taga Git.
+# Gdy repozytorium nie zawiera tagów, używa wartości 0.0.1-dev.
+#
+# usage:
+#   Blok jest wykonywany automatycznie jako część skryptu versioning.
+#
+# example:
+#   RELEASE_CANDIDATE_VERSION="$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.1-dev")"
+#
+# outputs:
+#   Eksportuje zmienną RELEASE_CANDIDATE_VERSION i zapisuje ją do pliku
+#   versioning.env przeznaczonego do publikacji jako raport dotenv.
+  - |
+    RELEASE_CANDIDATE_VERSION="$(git describe --tags --abbrev=0 2> /dev/null || echo "0.0.1-dev")"
+    export RELEASE_CANDIDATE_VERSION
+    cat > "versioning.env" <<EOF
+    RELEASE_CANDIDATE_VERSION=$RELEASE_CANDIDATE_VERSION
+    EOF
+
+# Uruchamia Semantic Release w trybie publikacji lub symulacji.
+#
+# usage:
+#   semantic_release
+#
+# example:
+#   VERSIONING_DRY_RUN="true"
+#   semantic_release
+#
+# outputs:
+#   Uruchamia polecenie semantic-release. Dla VERSIONING_DRY_RUN=true dodaje
+#   opcję --dry-run, która wyłącza publikację wydania i tagów.
+  - |
+    semantic_release() {
+      info "🚀 Semantic release"
+      echo "   Using 'semantic-release' from https://github.com/semantic-release"
+
+      dry_run=""
+      [ "$VERSIONING_DRY_RUN" == "true" ] && dry_run="--dry-run"
+      semantic-release $dry_run
+    }
+    semantic_release
+
+# Publikuje zmieniony plik CHANGELOG.md w bieżącej gałęzi.
+#
+# usage:
+#   push_changelog
+#
+# example:
+#   ARTIFACTS_TYPE="release"
+#   VERSIONING_DRY_RUN="false"
+#   push_changelog
+#
+# outputs:
+#   Tworzy commit "docs: update changelog [skip ci]" i wysyła go do
+#   CI_COMMIT_BRANCH. Funkcja działa tylko dla wydania typu release, poza
+#   trybem dry-run i gdy istnieje CHANGELOG.md. Używa GITLAB_USER_EMAIL
+#   oraz GITLAB_USER_NAME do konfiguracji autora commita.
+  - |
+    push_changelog() {
+      if [[ -f CHANGELOG.md && "$ARTIFACTS_TYPE" == "release" && "$VERSIONING_DRY_RUN" != "true" ]]; then
+        IS_CHANGE_CHANGELOG=$(git diff --quiet -- CHANGELOG.md)
+        if [ "$IS_CHANGE_CHANGELOG" ]; then
+          info "📄 Pushing changelog to GitLab"
+          git config user.email "${GITLAB_USER_EMAIL}"
+          git config user.name "${GITLAB_USER_NAME}"
+          git add CHANGELOG.md
+          git commit -m "docs: update changelog [skip ci]"
+          git push origin HEAD:"${CI_COMMIT_BRANCH}"
+        else
+          warn "📄 No changes in CHANGELOG.md, skipping push"
+        fi
+      fi
+    }
+    [ "$VERSIONING_DRY_RUN" == "true" ] || push_changelog
