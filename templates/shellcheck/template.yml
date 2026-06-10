@@ -1,11 +1,11 @@
 ---
 spec:
-  description: 
+  description: "Waliduje skrypty powłoki za pomocą narzędzia ShellCheck."
   inputs:
     job-name:
       type: string
       default: shellcheck
-      description: 
+      description: "Nazwa joba walidującego skrypty powłoki."
     job-stage:
       default: validate
       description: "Etap pipeline, na którym zostanie uruchomiony job."
@@ -27,8 +27,6 @@ spec:
       description: "Reguły określające, kiedy job zostanie dodany do pipeline."
       type: array
       default:
-        # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-        #   when: never
         - if: '$ENABLED_SHELLCHECK == "false"'
           when: never
         - when: on_success
@@ -45,7 +43,7 @@ spec:
       type: string
       default: ":"
     job-after-script:
-      description: "Dodatkowy skrypt wykonywany po walidacją Shellcheck."
+      description: "Dodatkowy skrypt wykonywany po walidacji ShellCheck."
       type: string
       default: ":"
 
