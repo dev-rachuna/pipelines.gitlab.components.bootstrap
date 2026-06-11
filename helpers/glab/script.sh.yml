@@ -1,0 +1,7 @@
+---
+.helpers.glab.script.sh:
+  - |
+    h3 "common/helpers/glab/script.sh.yml"
+    # Autoryzacja glab
+    glab auth login --hostname gitlab.com --token "${GITLAB_TOKEN}"
+    glab config set git_protocol https --host gitlab.com
