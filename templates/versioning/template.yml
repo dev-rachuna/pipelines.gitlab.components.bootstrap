@@ -10,16 +10,7 @@ spec:
     job-stage:
       default: publish
       description: "Etap pipeline, na którym zostanie uruchomiony job."
-      options: 
-        - .pre
-        - prepare          # CI | CD
-        - validate         # CI | CD
-        - dependency       # CI | CD
-        - build            # CI |
-        - deployment       #    | CD
-        - tests            # CI | CD
-        - publish          # CI | CD
-        - .post
+      options: [".pre", "prepare", "validate", "dependency", "build", "deployment", "tests", "publish", ".post"]
     job-image:
       description: "Obraz kontenera używany do uruchomienia joba."
       type: string

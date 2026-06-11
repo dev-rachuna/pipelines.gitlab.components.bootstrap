@@ -15,7 +15,7 @@ include:
 
 .after_script:
   image: $[[ inputs.image ]]
-  after_script: 
+  after_script:
     - !reference [.helpers.logger.script.sh]
     - !reference [.helpers.job-prepare.script.sh]
     - !reference [.helpers.job-docs.script.sh]

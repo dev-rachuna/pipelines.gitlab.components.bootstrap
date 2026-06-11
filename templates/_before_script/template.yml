@@ -15,11 +15,12 @@ include:
 
 .before_script:
   image: $[[ inputs.image ]]
-  before_script: 
+  before_script:
     - !reference [.helpers.logger.script.sh]
     - !reference [.helpers.job-prepare.script.sh]
     - !reference [.helpers.logo.script.sh]
     - !reference [.helpers.gitlab-tools.script.sh]
+    - !reference [.helpers.glab.script.sh]
     - $[[ inputs.before_script ]]
     - |
       if [ -n "${JOB_BEFORE_SCRIPT:-}" ]; then

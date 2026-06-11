@@ -24,6 +24,7 @@ automatycznego wersjonowania projektów.
 | [`job-prepare`](helpers/job-prepare/README.md) | Inicjalizacja środowiska i danych repozytorium CI |
 | [`logo`](helpers/logo/README.md) | Wyświetlanie banera z typem pipeline i gałęzią |
 | [`gitlab-tools`](helpers/gitlab-tools/README.md) | Funkcje GitLab API, Git i konfiguracja SSH |
+| [`glab`](helpers/glab/README.md) | Uwierzytelnianie GitLab CLI i konfiguracja operacji Git przez HTTPS |
 | [`job-docs`](helpers/job-docs/README.md) | Wyświetlanie statusu joba i odnośnika do dokumentacji |
 
 Wszystkie komponenty są wersjonowane wspólnie. Dla stabilnych pipeline należy
@@ -54,7 +55,10 @@ include:
 ```
 
 > [!warning]
-> Komponent `versioning` wymaga zmiennej chronionej `GITLAB_TOKEN`. Operacje publikujące changelog wymagają również `GITLAB_USER_NAME` i `GITLAB_USER_EMAIL`.
+> Komponent `_before_script` wymaga zmiennej `GITLAB_TOKEN`, używanej przez
+> helper `glab` do uwierzytelnienia w GitLab.com. Komponent `versioning`
+> korzysta z tego samego tokenu. Operacje publikujące changelog wymagają
+> również `GITLAB_USER_NAME` i `GITLAB_USER_EMAIL`.
 
 ## Zmienne sterujące
 
@@ -76,6 +80,7 @@ poszczególnych komponentów poniżej.
 .
 ├── helpers/
 │   ├── gitlab-tools/
+│   ├── glab/
 │   ├── job-docs/
 │   ├── job-prepare/
 │   ├── logger/
