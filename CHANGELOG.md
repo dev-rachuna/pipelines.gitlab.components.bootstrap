@@ -1,3 +1,9 @@
+## [1.1.0](https://gitlab.com/dev.rachuna/pipelines/gitlab/components/bootstrap/compare/1.0.1...1.1.0) (2026-06-11)
+
+### ✨ Features ✨
+
+* Dodanie helpera glab ([7b31e4a](https://gitlab.com/dev.rachuna/pipelines/gitlab/components/bootstrap/commit/7b31e4af91bf8e289429722ea206ef61e997318a))
+
 ## [1.0.1](https://gitlab.com/dev.rachuna/pipelines/gitlab/components/bootstrap/compare/1.0.0...1.0.1) (2026-06-10)
 
 ### 🐛 Bug Fixes 🐛
