@@ -7,7 +7,7 @@ skryptu joba.
 
 Helper wykonuje kolejno:
 
-1. Wyświetla w logu nagłówek `common/helpers/glab/script.sh.yml` za pomocą
+1. Wyświetla w logu nagłówek `glab/script.sh.yml` za pomocą
    funkcji `h3`.
 2. Loguje `glab` do hosta `gitlab.com`, używając tokenu ze zmiennej
    `GITLAB_TOKEN`.

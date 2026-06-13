@@ -18,7 +18,7 @@
 #   oraz GITLAB_CI_REPOSITORY_ID
   - |
     prepare_job() {
-      h3 "common/helpers/job-prepare/script.sh.yml"
+      h3 "job-prepare/script.sh.yml"
 
       CONFIG="${CI_CONFIG_PATH#*@}"
 
