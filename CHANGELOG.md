@@ -1,3 +1,14 @@
+## [1.2.0](https://gitlab.com/dev.rachuna/pipelines/gitlab/components/bootstrap/compare/1.1.0...1.2.0) (2026-06-13)
+
+### ✨ Features ✨
+
+* Utworzenie joba dynamic-deployment-environment ([42b2530](https://gitlab.com/dev.rachuna/pipelines/gitlab/components/bootstrap/commit/42b25306d43c7cd09c4ccb96680eeb0cd5d388c6))
+
+### 🐛 Bug Fixes 🐛
+
+* Poprawka wyœsietlaniu ścieżki do helpers ([fea4616](https://gitlab.com/dev.rachuna/pipelines/gitlab/components/bootstrap/commit/fea461668e4d2eed1a0ebdc3e02390ba5184c1eb))
+* Zmiana kolejności stages ([143418e](https://gitlab.com/dev.rachuna/pipelines/gitlab/components/bootstrap/commit/143418e03b97d1ea199900aba7c1850004207c21))
+
 ## [1.1.0](https://gitlab.com/dev.rachuna/pipelines/gitlab/components/bootstrap/compare/1.0.1...1.1.0) (2026-06-11)
 
 ### ✨ Features ✨
