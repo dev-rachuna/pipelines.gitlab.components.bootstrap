@@ -10,7 +10,7 @@ spec:
     job-stage:
       default: publish
       description: "Etap pipeline, na którym zostanie uruchomiony job."
-      options: [".pre", "prepare", "validate", "dependency", "build", "deployment", "tests", "publish", ".post"]
+      options: [".pre", "prepare", "dependency", "validate", "build", "deployment", "tests", "publish", ".post"]
     job-image:
       description: "Obraz kontenera używany do uruchomienia joba."
       type: string
@@ -45,7 +45,7 @@ spec:
 
 ---
 include:
-  - local: templates/versioning/script.sh.yml
+  - local: templates/$[[ component.name ]]/script.sh.yml
 
 "$[[ inputs.job-name ]]":
   image: "$[[ inputs.job-image ]]"
@@ -61,10 +61,10 @@ include:
   variables:
     GITLAB_CI_COMPONENTS_PATH: dev.rachuna/pipelines/gitlab/components/bootstrap
     GITLAB_CI_COMPONENTS_VERSION: "$[[ component.reference ]]"
-    RELEASERC_PATH: templates/versioning/.releaserc.cjs
+    RELEASERC_PATH: templates/$[[ component.name ]]/.releaserc.cjs
     VERSIONING_DRY_RUN: "$[[ inputs.job-dry-run ]]"
     NODE_EXTRA_CA_CERTS: /etc/ssl/certs/ca-certificates.crt
-    DOCS_MD_FILE_PATH: templates/versioning/README.md
+    DOCS_MD_FILE_PATH: templates/$[[ component.name ]]/README.md
   before_script:
     - !reference [.before_script, before_script]
     - |

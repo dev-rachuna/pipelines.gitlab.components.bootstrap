@@ -1,6 +1,5 @@
 ---
 .bootstrap.versioning.script.sh:
-
 # Sprawdza, czy projekt zawiera plik .releaserc.cjs. Jeżeli plik nie istnieje,
 # pobiera domyślną konfigurację Semantic Release z repozytorium komponentów.
 #

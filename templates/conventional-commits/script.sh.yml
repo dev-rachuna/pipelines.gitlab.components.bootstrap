@@ -1,6 +1,5 @@
 ---
 .bootstrap.conventional-commits.script.sh:
-
 # Pobiera tytuły commitów z bieżącej gałęzi względem domyślnej
 # gałęzi repozytorium.
 #

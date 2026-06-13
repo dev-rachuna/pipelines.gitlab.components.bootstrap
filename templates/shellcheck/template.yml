@@ -10,7 +10,7 @@ spec:
     job-stage:
       default: validate
       description: "Etap pipeline, na którym zostanie uruchomiony job."
-      options: [".pre", "prepare", "validate", "dependency", "build", "deployment", "tests", "publish", ".post"]
+      options: [".pre", "prepare", "dependency", "validate", "build", "deployment", "tests", "publish", ".post"]
     job-image:
       description: "Obraz kontenera używany do uruchomienia joba."
       type: string
@@ -21,7 +21,12 @@ spec:
       default:
         - if: '$ENABLED_SHELLCHECK == "false"'
           when: never
-        - when: on_success
+        - changes:
+            compare_to: 'refs/heads/main'
+            paths:
+              - "**/*.sh.yml"
+              - "**/*.sh"
+          when: on_success
     job-needs:
       description: "Lista jobów wymaganych przed uruchomieniem tego joba."
       type: array
@@ -41,7 +46,7 @@ spec:
 
 ---
 include:
-  - local: templates/shellcheck/script.sh.yml
+  - local: templates/$[[ component.name ]]/script.sh.yml
 
 "$[[ inputs.job-name ]]":
   image: "$[[ inputs.job-image ]]"
@@ -56,7 +61,7 @@ include:
     - .after_script
   variables:
     GITLAB_CI_COMPONENTS_PATH: dev.rachuna/pipelines/gitlab/components/bootstrap
-    DOCS_MD_FILE_PATH: templates/shellcheck/README.md
+    DOCS_MD_FILE_PATH: templates/$[[ component.name ]]/README.md
     GITLAB_CI_COMPONENTS_VERSION: "$[[ component.reference ]]"
   before_script:
     - !reference [.before_script, before_script]
