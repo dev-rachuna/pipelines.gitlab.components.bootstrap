@@ -1,7 +1,7 @@
 ---
 .helpers.logo.script.sh:
   - |
-    h3 "common/helpers/logo/script.sh.yml"
+    h3 "logo/script.sh.yml"
 
 # Wyświetla logo pipeline'u wraz z jego typem i gałęzią
 # repozytorium konfiguracji CI.

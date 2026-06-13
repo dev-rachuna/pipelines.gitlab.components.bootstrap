@@ -1,7 +1,7 @@
 ---
 .helpers.gitlab-tools.script.sh:
   - |
-    h3 "common/helpers/gitlab-tools/script.sh.yml"
+    h3 "gitlab-tools/script.sh.yml"
 
 # Dodaje wszystkie zmiany do indeksu, wykonuje amend ostatniego commit i wypycha go do bieżącej gałęzi.
 #

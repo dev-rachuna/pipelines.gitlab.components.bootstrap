@@ -1,7 +1,7 @@
 ---
 .helpers.job-docs.script.sh:
   - |
-    h3 "common/helpers/job-docs/script.sh.yml"
+    h3 "job-docs/script.sh.yml"
 
 # Wyświetla baner z odnośnikiem do dokumentacji projektu,
 # dobierając kolor na podstawie statusu joba.
