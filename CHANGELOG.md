@@ -1,3 +1,9 @@
+## [1.2.1](https://gitlab.com/dev.rachuna/pipelines/gitlab/components/bootstrap/compare/1.2.0...1.2.1) (2026-06-15)
+
+### 🐛 Bug Fixes 🐛
+
+* poprawka przy wersjonowaniu ([f4d7b67](https://gitlab.com/dev.rachuna/pipelines/gitlab/components/bootstrap/commit/f4d7b678a6b8562ae9253600dba66753858dd6f1))
+
 ## [1.2.0](https://gitlab.com/dev.rachuna/pipelines/gitlab/components/bootstrap/compare/1.1.0...1.2.0) (2026-06-13)
 
 ### ✨ Features ✨
