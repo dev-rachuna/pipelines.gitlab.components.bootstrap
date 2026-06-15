@@ -52,7 +52,12 @@ include:
   stage: "$[[ inputs.job-stage ]]"
   rules: "$[[ inputs.job-rules ]]"
   needs: "$[[ inputs.job-needs ]]"
-  artifacts: {}
+  artifacts:
+    reports:
+      dotenv: versioning.env
+    expire_in: "1 day"
+    paths:
+      - CHANGELOG.md
   cache: {}
   resource_group: "$[[ inputs.job-resource-group ]]"
   extends:
