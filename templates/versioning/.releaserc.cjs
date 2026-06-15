@@ -51,7 +51,8 @@ module.exports = {
     [
       "@semantic-release/git",
       {
-        "assets": changelogExists ? ["CHANGELOG.md"] : []
+        "assets": changelogExists ? ["CHANGELOG.md"] : [],
+        "message": "docs(release): Aktualizacja CHANGELOG.md"
       }
     ],
     '@semantic-release/gitlab',
