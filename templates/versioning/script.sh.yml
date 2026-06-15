@@ -91,7 +91,7 @@
           git config user.email "${GITLAB_USER_EMAIL}"
           git config user.name "${GITLAB_USER_NAME}"
           git add CHANGELOG.md
-          git commit -m "docs: update changelog [skip ci]"
+          git commit -m "docs: Aktualizacja pliku CHANGELOG.md"
           git push origin HEAD:"${CI_COMMIT_BRANCH}"
         else
           warn "📄 No changes in CHANGELOG.md, skipping push"
